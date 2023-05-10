@@ -17,10 +17,14 @@ Including another URLconf
 from django.contrib import admin
 from django.urls import path
 from django.conf.urls import include
-
+from tienda import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('core/', include('core.urls')),
-    path('homepage/', include('homepage.urls'))
+    path('homepage/', include('homepage.urls')),
+    path('', views.categoria),
+    path('juguetes/', views.juguetes),
+    path('zapatos/', views.zapatos),
+    path('jardinería/', views.jardineria),
 ]
