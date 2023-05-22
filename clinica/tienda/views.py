@@ -1,4 +1,12 @@
 from django.shortcuts import render
+from tienda.models import Categoria
+
+
+def categorias(request):
+    categorias = Categoria.objects.all()
+    cat_dic = {'cat_dic': categorias}
+    return render(request, 'tienda/categorias.html', cat_dic)
+
 
 # Create your views here.
 def juguetes(request):
@@ -9,18 +17,8 @@ def juguetes(request):
         }
     return render(request, "tienda/juguetes.html", dict_productos) 
 
-# Create your views here.
-def zapatos(request):
-    dict_productos = {
-        "zapato1":"zapato1",
-        "zapato2":"zapato2",
-        "zapato3":"zapato3"
-        }
-    return render(request, "tienda/zapatos.html", dict_productos) 
 
-def jardineria(request):
-    contexto = {"usuario":"Azahara"}
-    return render(request, "tienda/eco.html", contexto) 
+
 
 def categoria(request):
     return render(request, "tienda/categorias.html") 

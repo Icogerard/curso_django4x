@@ -21,10 +21,7 @@ from tienda import views
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('core/', include('core.urls')),
     path('homepage/', include('homepage.urls')),
-    path('', views.categoria),
+    path('', views.categorias),
     path('juguetes/', views.juguetes),
-    path('zapatos/', views.zapatos),
-    path('jardinería/', views.jardineria),
 ]
