@@ -29,6 +29,7 @@ INSTALLED_APPS = [
     'core',
     'homepage',
     'tienda',
+    'correo'
 ]
 
 MIDDLEWARE = [
@@ -50,6 +51,7 @@ TEMPLATES = [
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
+                'django.template.context_processors.csrf',
                 'django.template.context_processors.debug',
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
@@ -98,7 +100,12 @@ AUTH_PASSWORD_VALIDATORS = [
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = 'es'
+
+LANGUAGE = [
+    ('es', 'Español'),
+    ('en', 'Inglés')
+]
 
 TIME_ZONE = 'UTC'
 
@@ -119,3 +126,10 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+# mailtrap
+EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
+EMAIL_HOST_USER = 'b7b5ceb9af26c8'
+EMAIL_HOST_PASSWORD = 'a3e6c1676e6a1d'
+EMAIL_PORT = '2525'
+

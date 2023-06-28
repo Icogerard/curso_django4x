@@ -1,0 +1,14 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    
+    <h1 class="text-center"> Mensaje de correo electrónico</h1>
+    
+    <form method="post" class="mensaje_correo" novalidate>
+        {% csrf_token %}
+        {{ form.as_p }}
+        <button type="submit" class="btn btn-secondary">Envíar</button>
+        {% csrf_token %}
+    </form>
+{% endblock %}
