@@ -28,8 +28,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'homepage',
-    'tienda',
-    'correo'
+    'correo',
+    'usuarios'
 ]
 
 MIDDLEWARE = [
@@ -70,7 +70,7 @@ WSGI_APPLICATION = 'clinica.wsgi.application'
 DATABASES = {
     'default': {
          'ENGINE': 'django.db.backends.mysql',
-         'NAME': 'tienda',
+         'NAME': 'clinica',
          'USER': 'root',
          'PASSWORD': '123Password...',
          'PORT': '3306',
@@ -120,7 +120,13 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
     os.path.join(BASE_DIR, 'static'),
+    os.path.join(BASE_DIR, 'correo/static'),
 ]
+
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'
+
+
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
@@ -129,7 +135,8 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # mailtrap
 EMAIL_HOST = 'sandbox.smtp.mailtrap.io'
-EMAIL_HOST_USER = 'b7b5ceb9af26c8'
-EMAIL_HOST_PASSWORD = 'a3e6c1676e6a1d'
+EMAIL_HOST_USER = '97c2df4ac2a186'
+EMAIL_HOST_PASSWORD = '243c995a897326'
 EMAIL_PORT = '2525'
 
+AUTH_USER_MODEL = 'usuarios.UsuarioPersonalizado'

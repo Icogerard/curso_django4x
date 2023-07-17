@@ -1,9 +1,9 @@
 from django.urls import path
-from homepage.views import mostrar
+from homepage.views import pagina_principal
 
 
 urlpatterns = [
-    path('', mostrar)
+    path('', pagina_principal, name='pagina_principal')
 ]   
 
 

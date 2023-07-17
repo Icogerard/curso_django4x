@@ -4,12 +4,6 @@ import datetime
 # Create your views here.
 
 
-def mostrar(request):
-    return HttpResponse("<h2> Esto es Checked Code | HomePage</h2>")
+def pagina_principal(request):
+    return render(request, 'pagina_principal.html')
 
-"""def mostrarDateTime(request):
-    dt = datetime.datetime.now()
-    dt = str(dt)
-    c = "<h2> Fecha y hora actual: </h2>" + "<b>" + dt +"</b>"
-    return HttpResponse(c)
-"""
