@@ -5,101 +5,67 @@ from django.views.decorators.csrf import csrf_exempt, csrf_protect
 from django.core.mail import send_mail
 from django.core.mail import EmailMessage
 from usuarios.models import UsuarioPersonalizado
+from functools import wraps
+from django.shortcuts import redirect
 
-# Create your views here.
 
+def solo_miembros_del_personal(vista_protegida):
+    @wraps(vista_protegida)
+    def _vista_envuelta(request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('login')
+        elif not request.user.is_staff:
+            return redirect('/')
+        else:
+            return vista_protegida(request, *args, **kwargs)
+    return _vista_envuelta
+
+@solo_miembros_del_personal
 @csrf_protect
 def enviar_correo(request):
-    mensaje_correo = None
+    mensaje_error = None
     if request.method == 'POST':
-        if not request.user.is_authenticated:
-            return JsonResponse(
-                {
-                    'success': False,
-                    'errores': {'nombre': ['Es necesario ser un usuario activo para enviar correos.']}
-                }
-            )
-        elif request.user.is_staff:
-            nombre = request.POST.get('nombre', '').strip()
-            if not nombre:
-                return JsonResponse({'success': False, 'errores': {'nombre': ['Porfavor, completa tu nombre en el perfil']}})
+        nombre = request.POST.get('nombre', '').strip()
+        if not nombre:
+            return JsonResponse({'success': False, 'errores': {'nombre': ['Porfavor, completa tu nombre en el perfil']}})
+        if not request.user.email:
+            mensaje_error = {'email': ['No cuentas con email. Completa el campo en el perfil']}
+            return JsonResponse({'success': False, 'errores': mensaje_error})
+
 
         form = FormCorreo(request.POST)
 
-        destinatarios = []
-        usuarios_sin_correo = []
-        for usuario in form['usuarios'].value():
-            try:
-                usuario_obj = UsuarioPersonalizado.objects.get(pk=usuario)
-                if usuario_obj.email:
-                    destinatarios.append(usuario_obj.email)
-                else:
-                    usuarios_sin_correo.append(usuario_obj.username)
-            except UsuarioPersonalizado.DoesNotExist:
-                pass
-        if usuarios_sin_correo:
-            mensaje_correo = f'Los siguientes usuarios no tienen una direccion de correo electrónico válida: {", ".join(usuarios_sin_correo)}. Completa tu correo en el perfil'
-            return JsonResponse({'success': False, 'errores': {'destinatarios': [mensaje_correo]}})
-
         if form.is_valid():
-            registro = form.save()
-            asunto = registro.asunto
-            nombre = registro.nombre
-            email = registro.email
-            mensaje = registro.mensaje
-            latitud = registro.latitud
-            longitud = registro.longitud
-
-            mensaje_correo = f'<table><tr><td>Nombre:</td><td>{nombre}</td></tr><tr><td>Mensaje:</td><td>{mensaje}</td></tr>'
-            if email:
-                mensaje_correo += f'<tr><td>Correo electrónico alternativo:</td><td>{email}</td></tr>'
-            if latitud:
-                mensaje_correo += f'<tr><td>Latitud:</td><td>{latitud}</td></tr>'
-            if longitud:
-                mensaje_correo += f'<tr><td>Longitud:</td><td>{longitud}</td></tr>'
-            mensaje_correo += '</table>'
-
-            if not destinatarios:
-                mensaje_correo = {'general': ['No se ha seleccionado ningún destinatario válido.']}
-                return JsonResponse({"success": False, "errores": mensaje_correo})           
-            else:
-                ruta_imagen = None
-                if request.user.is_authenticated and request.user.imagen_perfil:
-                    ruta_imagen = request.user.imagen_perfil.path
-                else:
-                    ruta_imagen = './static/assets/img/cc.jpeg'
-
-                email = EmailMessage(
-                    asunto,
-                    mensaje_correo,
-                    'cursodjango4.x@gmail.com',
-                    destinatarios,
-                    reply_to=['otro@dominio.com'],
-                    headers={'Message-ID': 'Checked Code'}
-                )
-
-                email.attach_file(ruta_imagen)
-                email.content_subtype = "html"
-
-                email.send(fail_silently=False)
-                return JsonResponse({"success": True})
+            form.save()
+            return JsonResponse({"success": True})
         else:
-            if 'usuario' in form.errors.as_data():
-                print("codigo:", form.errors.as_data()['usuario'][0].code)
-            print({"errores": form.errors})
-            # mostrar las validaciones
-            return JsonResponse({'success': False, 'errores': form.errors})
+            errores = form.errors.as_data()
+            mensaje_error = {}
+            for campo, lista_errores in errores.items():
+                if campo == '__all__':
+                    campo = form.campos_validados
+                errores_str = []
+                for error in lista_errores:
+                    errores_str.append(str(error))
+                mensaje_error[(str(campo))] = errores_str
+            return JsonResponse({'success': False, 'errores': mensaje_error})
     else:
         if request.user.is_authenticated:
-            nombre_inicial = request.user.first_name
-            apellidos_iniciales = request.user.last_name
+            if request.user.first_name and request.user.last_name:
+                nombre_inicial = request.user.first_name
+                apellidos_iniciales = request.user.last_name
+            else:
+                nombre_inicial = request.user.first_name
+                apellidos_iniciales = None
         else:
-            nombre_inicial = 'Anónimo'
+            nombre_inicial = None
             apellidos_iniciales = None
+        
         # En caso cuya solicitud no sea POST
-        form = FormCorreo(nombre_inicial=nombre_inicial, apellidos_iniciales=apellidos_iniciales)
+        form = FormCorreo(nombre_inicial=nombre_inicial, apellidos_iniciales=apellidos_iniciales, usuario_actual=request.user)
         return render(request, 'enviar.html', {'form': form})
 
+@solo_miembros_del_personal
 def correo(request):
     return render(request, 'correo.html')
 

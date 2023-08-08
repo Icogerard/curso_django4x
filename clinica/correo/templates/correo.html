@@ -3,13 +3,15 @@
 
 
 {% block content %}
-    <div class="mt-5 col-sm-12 col-md d-flex justify-content-center align-items-center text-center">
-        <div class="mt-3">
-            <p class="h2"><spam id="">spam</spam></p>
-            <hr>
-            <div class="btn-group my-3" role="group">
-                <a class="btn btn-warning btn-lg" href="{% url 'enviar_correo' %}">Enviar correo</a>
-                <button class="btn btn-info btn-lg btn-block">Bandeja de correos</button>
+    <div class="row vh-100">
+        <div class="mt-5 col-sm-12 col-md d-flex justify-content-center align-items-center text-center">
+            <div class="mt-3">
+                <p class="h2"><spam id="">Correos</spam></p>
+                <hr>
+                <div class="btn-group my-3" role="group">
+                    <a class="btn btn-warning btn-lg" href="{% url 'enviar_correo' %}">Enviar</a>
+                    <button class="btn btn-info btn-lg btn-block">Bandeja</button>
+                </div>
             </div>
         </div>
     </div>

@@ -73,3 +73,8 @@ ul {
     display: none;
 }
 
+
+.btn-rounded-left {
+    border-top-left-radius: 5px !important;
+    border-bottom-left-radius: 5px !important;
+}

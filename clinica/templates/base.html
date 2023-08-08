@@ -18,7 +18,15 @@
 
   <!-- ======= Header ======= -->
   <header>
-    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top 
+                {% if user.is_authenticated %}
+                  {% if user.is_superuser %} navbar-dark bg-dark
+                    {% elif user.is_staff %} navbar-dark bg-primary
+                    {% else %} navbar-dark bg-success
+                  {% endif %}
+                  {% else %} navbar-light 
+                {% endif %}" style="background-color: #FF5733;">
+
       <div class="container-fluid">
         <a class="navbar-brand" href="#">Checked Code</a>
         <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarCollapse" aria-controls="navbarCollapse" aria-expanded="false" aria-label="Toggle navigation">
@@ -27,11 +35,22 @@
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav me-auto mb-2 mb-md-0">
             <li class="nav-item">
-              <a class="nav-link active" aria-current="page" href="{% url 'pagina_principal'%}">Inicio</a>
+              <a class="nav-link" aria-current="page" href="{% url 'pagina_principal'%}">Inicio</a>
             </li>
-            <li class="nav-item">
-              <a class="nav-link active" href="{% url 'correo' %}">Correos</a>
-            </li>
+            {% if request.user.is_staff %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'correo' %}">Correos</a>
+              </li>
+            {% endif %}
+            {% if request.user.is_authenticated %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'logout' %}">Cerrar sesión</a>
+              </li>
+            {% else %}
+              <li class="nav-item">
+                <a class="nav-link" href="{% url 'login' %}">Iniciar sesión</a>
+              </li>
+            {% endif %}
           </ul>
         </div>
       </div>
@@ -51,7 +70,7 @@
     <div class="fotter mt-auto py-3 bg-light fixed-bottom">
       <div class="container">
         <span class="text-muted">
-          &copy; Copyright 2023<strong><span>Checked Code</span></strong>. Todos los derechos reservados
+          &copy; Copyright 2023<strong><span> Checked Code</span></strong>. Todos los derechos reservados
         </span>
       </div>
    

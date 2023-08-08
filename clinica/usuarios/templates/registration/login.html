@@ -16,7 +16,15 @@
 {% block content %}
     <div class="centrado">
         <div class="col-md text-center">
-            <p class="h2"><span id="">Clínica Médica</span></p>
+            <h2 class="mt-5">Acceso</h2>
+            <hr>
+            <form method='post' class='form-group'>
+                {% csrf_token %}
+                {{ form.as_p }}
+                <div class="form-group mb-5">
+                    <button type="submit" class="btn btn-dark w-100">Envíar</button>
+                <div>
+            </form>    
         </div>
     </div>
 {% endblock %}

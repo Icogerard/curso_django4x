@@ -69,7 +69,7 @@ $('form.mensaje_correo').on('submit', function(event) {
     console.log("Manejando el evento submit");
     $.ajax({
         type: 'POST',
-        url: '/enviar_correo/',
+        url: window.location.pathname,  //'/correo/enviar_correo/',
         data: $(form).serialize(),
         success: function(response) {
             if (response.success) {
@@ -86,7 +86,7 @@ $('form.mensaje_correo').on('submit', function(event) {
                     var errorLista = errores[campo];
                     for (var i = 0; i < errorLista.length; i++) {
                         var error = errorLista[i];
-                        errorMensaje += 'Error en el campo ' + campo + ': ' + error + '\n';
+                        errorMensaje += 'Error en el campo ' + campo + ': ' + error.replace(/[\[\]']/g, '') + '\n'; 
                     }
                 }
                 swal(errorMensaje);
